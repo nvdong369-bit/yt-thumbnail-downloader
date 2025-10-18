@@ -1,88 +1,86 @@
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
-import re
-import requests
-import os
-
-app = Flask(__name__, template_folder="templates")
-CORS(app)
-
-# ========== Helper ========== #
-def extract_video_id(url: str):
-    """Lấy video_id từ link YouTube"""
-    pattern = r"(?:v=|youtu\.be/)([A-Za-z0-9_-]{11})"
-    match = re.search(pattern, url)
-    return match.group(1) if match else None
-
-def check_url_exists(url: str) -> bool:
-    """Kiểm tra URL có tồn tại không (tránh 404)"""
-    try:
-        r = requests.head(url, timeout=5)
-        return r.status_code == 200
-    except:
-        return False
-
-def get_thumbnail(video_id: str, quality: str = "maxres"):
-    """Lấy thumbnail theo chất lượng, fallback nếu link 404"""
-    quality_map = {
-        "default": "default.jpg",
-        "mq": "mqdefault.jpg",
-        "hq": "hqdefault.jpg",
-        "sd": "sddefault.jpg",
-        "maxres": "maxresdefault.jpg"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tải Ảnh Thumbnail YouTube 4K/Full HD Miễn Phí | Công cụ Downloader</title>
+  
+  <meta name="description" content="Tải Thumbnail YouTube miễn phí, chất lượng cao (HD, FullHD, 4K). Công cụ Downloader nhanh và dễ dùng, hỗ trợ mọi kích thước ảnh thu nhỏ.">
+  <meta property="og:title" content="YouTube Thumbnail Downloader - Công cụ Tải ảnh thu nhỏ HD/4K Miễn phí">
+  <meta property="og:description" content="Tải xuống Thumbnail YouTube miễn phí, chất lượng cao (HD, FullHD, 4K). Công cụ YouTube Thumbnail Downloader nhanh và dễ dùng, hỗ trợ mọi kích thước ảnh thu nhỏ.">
+  <meta property="og:image" content="https://yt-thumbnail-downloader-diqi.onrender.com/static/logo-share.png">
+  <meta property="og:url" content="https://yt-thumbnail-downloader-diqi.onrender.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "YouTube Thumbnail Downloader",
+    "operatingSystem": "Web Browser",
+    "applicationCategory": "Multimedia",
+    "url": "https://yt-thumbnail-downloader-diqi.onrender.com/",
+    "description": "Tải ảnh thumbnail YouTube chất lượng cao 4K/Full HD miễn phí.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
     }
+  }
+  </script>
 
-    order = ["maxres", "sd", "hq", "mq", "default"]
-    if quality not in quality_map:
-        quality = "maxres"
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📥 Tải TẤT CẢ Thumbnail YouTube</h1>
+    
+    <input type="text" id="ytLink" placeholder="Dán link YouTube tại đây"><br>
+    
+    <button onclick="getThumbnail()">Lấy TẤT CẢ Thumbnail</button>
 
-    url = f"https://img.youtube.com/vi/{video_id}/{quality_map[quality]}"
-    if check_url_exists(url):
-        return url
+    <div id="videoInfo">
+      <h2 id="videoTitle"></h2> 
+    </div>
 
-    # fallback
-    for q in order:
-        url = f"https://img.youtube.com/vi/{video_id}/{quality_map[q]}"
-        if check_url_exists(url):
-            return url
-    return None
+    <div id="result" class="result">
+        </div>
+  </div>
 
-# ========== Routes ========== #
-@app.route("/")
-def home():
-    # Giữ nguyên /index.html cũ (có select size)
-    return render_template("index.html")
+  <div class="container promo">
+    <h2>🔥 YT Multi Downloader – Phiên bản Full 🔥</h2>
+    <p>👉 Công cụ tải <b>Video YouTube 4K / Full HD</b>, <b>MP3</b>, <b>Thumbnail</b>, <b>Subtitle</b> 
+       cực nhanh – không quảng cáo, không giới hạn!</p>
+    <ul>
+      <li>✔ Tải video chất lượng cao (720p, 1080p, 4K)</li>
+      <li>✔ Xuất audio MP3 ngay lập tức</li>
+      <li>✔ Tải phụ đề đa ngôn ngữ (EN, VI, auto)</li>
+      <li>✔ Lưu Thumbnail mọi kích thước (HD, FullHD, 4K)</li>
+      <li>✔ Chạy trực tiếp trên máy tính – không cần cài đặt rườm rà</li>
+    </ul>
+    <p style="color:red; font-weight:bold;">
+      ⚡ Phiên bản web này chỉ demo tải thumbnail. <br>
+      👉 Muốn nhận bản <u>Full App EXE</u> hãy inbox trực tiếp Admin để lấy key cài đặt.
+    </p>
+    <p>
+      📩 Liên hệ: 
+      <b><a href="https://www.facebook.com/nguyenvan.dong08/?locale=vi_VN" target="_blank">Facebook</a></b> 
+      / 
+      <b><a href="https://zalo.me/0965549508" target="_blank">Zalo</a></b>
+      (SĐT: <a href="tel:0965549508">0965549508</a>)
+      <br>
+      ⏳ Số lượng key tặng giới hạn cho những người nhắn sớm!
+    </p>
+  </div>
+  
+  <footer>
+    <div class="footer-links">
+        <a href="/">Trang Chủ</a> |
+        <a href="/about">Giới thiệu</a> |
+        <a href="/privacy">Chính sách bảo mật</a>
+    </div>
+    <p>&copy; 2025 YouTube Thumbnail Downloader. All rights reserved.</p>
+  </footer>
 
-# Thêm lại các route /about và /privacy (nếu bạn đã thêm)
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
-@app.route("/privacy")
-def privacy():
-    return render_template("privacy.html")
-
-
-@app.route("/get_thumbnail", methods=["POST"])
-def get_thumbnail_api():
-    data = request.json
-    url = data.get("url")
-    # Lấy size từ request, phù hợp với index.html cũ
-    size = data.get("size", "maxres") 
-
-    if not url:
-        return jsonify({"error": "❌ Bạn chưa nhập link YouTube"}), 400
-
-    video_id = extract_video_id(url)
-    if not video_id:
-        return jsonify({"error": "❌ Link YouTube không hợp lệ"}), 400
-
-    thumb_url = get_thumbnail(video_id, size)
-    if not thumb_url:
-        return jsonify({"error": "⚠️ Không tìm thấy thumbnail (ID hợp lệ nhưng ảnh 404)"}), 404
-
-    return jsonify({"thumbnail_url": thumb_url})
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render/Heroku sẽ cấp biến PORT
-    app.run(host="0.0.0.0", port=port)
+  <script src="/static/script.js"></script>
+</body>
+</html>

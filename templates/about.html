@@ -1,50 +1,87 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giới thiệu - YouTube Thumbnail Downloader</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 0; }
-        .container { max-width: 750px; margin: 40px auto; background: white; padding: 30px;
-            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: left; }
-        h1 { color: #007BFF; border-bottom: 2px solid #007BFF; padding-bottom: 10px; margin-bottom: 20px; }
-        p { line-height: 1.6; margin-bottom: 15px; }
-        ul { padding-left: 20px; margin-bottom: 20px; }
-        li { margin-bottom: 8px; }
-        a { color: #007BFF; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        footer { margin-top: 40px; font-size: 14px; text-align: center; padding: 10px 0; border-top: 1px solid #eee; }
-        footer a { margin: 0 10px; color: #007BFF; text-decoration: none; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Tải Ảnh Thumbnail YouTube 4K/Full HD Miễn Phí | Công cụ Downloader</title>
+  
+  <meta name="description" content="Tải Thumbnail YouTube miễn phí, chất lượng cao (HD, FullHD, 4K). Công cụ Downloader nhanh và dễ dùng, hỗ trợ mọi kích thước ảnh thu nhỏ.">
+  
+  <meta property="og:title" content="YouTube Thumbnail Downloader - Công cụ Tải ảnh thu nhỏ HD/4K Miễn phí">
+  <meta property="og:description" content="Tải xuống Thumbnail YouTube miễn phí, chất lượng cao (HD, FullHD, 4K). Công cụ YouTube Thumbnail Downloader nhanh và dễ dùng, hỗ trợ mọi kích thước ảnh thu nhỏ.">
+  <meta property="og:image" content="https://yt-thumbnail-downloader-diqi.onrender.com/static/logo-share.png">
+  <meta property="og:url" content="https://yt-thumbnail-downloader-diqi.onrender.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "YouTube Thumbnail Downloader",
+    "operatingSystem": "Web Browser",
+    "applicationCategory": "Multimedia",
+    "url": "https://yt-thumbnail-downloader-diqi.onrender.com/",
+    "description": "Tải ảnh thumbnail YouTube chất lượng cao 4K/Full HD miễn phí.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Giới Thiệu Về Công Cụ YouTube Thumbnail Downloader</h1>
-        <p>
-            Chúng tôi tạo ra công cụ này với mục tiêu đơn giản: cung cấp cho người dùng một giải pháp nhanh chóng và miễn phí để tải xuống ảnh thu nhỏ (Thumbnail) của bất kỳ video YouTube nào với chất lượng cao nhất (HD, Full HD, thậm chí 4K nếu khả dụng).
-        </p>
+  <div class="container">
+    <h1>📥 Tải Thumbnail từ YouTube</h1> 
+    
+    <input type="text" id="ytLink" placeholder="Dán link YouTube tại đây"><br>
 
-        <h2>Tại sao nên sử dụng công cụ của chúng tôi?</h2>
-        <ul>
-            <li><strong>Miễn phí 100%:</strong> Không giới hạn số lần tải, không yêu cầu đăng ký.</li>
-            <li><strong>Chất lượng Cao nhất:</strong> Ưu tiên trích xuất ảnh `maxresdefault.jpg` để đảm bảo độ phân giải tối đa (1280x720 hoặc lớn hơn).</li>
-            <li><strong>Dễ sử dụng:</strong> Chỉ cần dán URL và nhấn Tải.</li>
-            <li><strong>Hỗ trợ đa dạng link:</strong> Xử lý tốt các định dạng link tiêu chuẩn, link rút gọn `youtu.be` và cả link YouTube Shorts.</li>
-        </ul>
+    <label for="size">Kích thước thumbnail:</label>
+    <select id="size">
+      <option value="maxres" selected>1280x720 (maxres)</option>
+      <option value="sd">640x480 (sd)</option>
+      <option value="hq">480x360 (hq)</option>
+      <option value="mq">320x180 (mq)</option>
+      <option value="default">120x90 (default)</option>
+    </select><br>
 
-        <h2>Về Phiên Bản Đầy Đủ (Full App EXE)</h2>
-        <p>
-            Nếu bạn là người sáng tạo nội dung, nhà tiếp thị hoặc cần tải xuống không chỉ thumbnail mà còn cả Video 4K, MP3 và Phụ đề, chúng tôi có cung cấp phiên bản Full App EXE. Đây là công cụ All-in-One, chạy trực tiếp trên máy tính, không quảng cáo và tốc độ tải tối đa.
-        </p>
-        <p>
-            Để biết thêm chi tiết về phiên bản Full App và cách sở hữu Key cài đặt, vui lòng liên hệ trực tiếp qua thông tin đã cung cấp trên trang chủ.
-        </p>
-    </div>
-    <footer>
-        <a href="/">Trang chủ</a> |
+    <button onclick="getThumbnail()">Lấy Thumbnail</button>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <div class="container promo">
+    <h2>🔥 YT Multi Downloader – Phiên bản Full 🔥</h2>
+    <p>👉 Công cụ tải <b>Video YouTube 4K / Full HD</b>, <b>MP3</b>, <b>Thumbnail</b>, <b>Subtitle</b> 
+       cực nhanh – không quảng cáo, không giới hạn!</p>
+    <ul>
+      <li>✔ Tải video chất lượng cao (720p, 1080p, 4K)</li>
+      <li>✔ Xuất audio MP3 ngay lập tức</li>
+      <li>✔ Tải phụ đề đa ngôn ngữ (EN, VI, auto)</li>
+      <li>✔ Lưu Thumbnail mọi kích thước (HD, FullHD, 4K)</li>
+      <li>✔ Chạy trực tiếp trên máy tính – không cần cài đặt rườm rà</li>
+    </ul>
+    <p style="color:red; font-weight:bold;">
+      ⚡ Phiên bản web này chỉ demo tải thumbnail. <br>
+      👉 Muốn nhận bản <u>Full App EXE</u> hãy inbox trực tiếp Admin để lấy key cài đặt.
+    </p>
+    <p>
+      📩 Liên hệ: <b>Facebook / Zalo <965549508></b><br>
+      ⏳ Số lượng key tặng giới hạn cho những người nhắn sớm!
+    </p>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+        <a href="/">Trang Chủ</a> |
         <a href="/about">Giới thiệu</a> |
         <a href="/privacy">Chính sách bảo mật</a>
-    </footer>
+    </div>
+    <p>&copy; 2025 YouTube Thumbnail Downloader. All rights reserved.</p>
+  </footer>
+
+  <script src="/static/script.js"></script>
 </body>
 </html>
