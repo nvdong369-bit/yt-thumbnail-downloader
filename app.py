@@ -3,6 +3,8 @@ from flask_cors import CORS
 import re
 import requests
 import os
+# Đã thêm import pytube
+from pytube import YouTube 
 
 app = Flask(__name__, template_folder="templates")
 CORS(app)
@@ -14,62 +16,50 @@ def extract_video_id(url: str):
     match = re.search(pattern, url)
     return match.group(1) if match else None
 
-def check_url_exists(url: str) -> bool:
-    """Kiểm tra URL có tồn tại không (tránh 404)"""
-    try:
-        r = requests.head(url, timeout=5)
-        return r.status_code == 200
-    except:
-        return False
-
-def get_thumbnail(video_id: str, quality: str = "maxres"):
-    """Lấy thumbnail theo chất lượng, fallback nếu link 404"""
-    quality_map = {
-        "default": "default.jpg",
-        "mq": "mqdefault.jpg",
-        "hq": "hqdefault.jpg",
-        "sd": "sddefault.jpg",
-        "maxres": "maxresdefault.jpg"
+# Hàm mới: Tạo ra TẤT CẢ các URL thumbnail chuẩn
+def generate_all_thumbnails(video_id: str):
+    base_url = f"https://img.youtube.com/vi/{video_id}/"
+    qualities = {
+        "maxres": "1280x720 (4K/HD)", 
+        "sd": "640x480 (SD)", 
+        "hq": "480x360 (HQ)", 
+        "mq": "320x180 (MQ)", 
+        "default": "120x90 (Default)"
     }
-
-    order = ["maxres", "sd", "hq", "mq", "default"]
-    if quality not in quality_map:
-        quality = "maxres"
-
-    url = f"https://img.youtube.com/vi/{video_id}/{quality_map[quality]}"
-    if check_url_exists(url):
-        return url
-
-    # fallback
+    
+    urls = []
+    # Thứ tự này đảm bảo maxres được kiểm tra/hiển thị đầu tiên
+    order = ["maxres", "sd", "hq", "mq", "default"] 
+    
     for q in order:
-        url = f"https://img.youtube.com/vi/{video_id}/{quality_map[q]}"
-        if check_url_exists(url):
-            return url
-    return None
+        desc = qualities.get(q, q)
+        urls.append({
+            "quality": q,
+            "description": desc,
+            "url": base_url + f"{q}default.jpg"
+        })
+    return urls
 
 # ========== Routes ========== #
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# NEW ROUTES FOR NAVIGATION
+# Thêm lại các route /about và /privacy (để footer hoạt động)
 @app.route("/about")
 def about():
-    # Giả sử bạn có file about.html trong thư mục templates
     return render_template("about.html")
 
 @app.route("/privacy")
 def privacy():
-    # Giả sử bạn có file privacy.html trong thư mục templates
     return render_template("privacy.html")
-# END NEW ROUTES
 
+# Route chính được sửa để dùng pytube
 @app.route("/get_thumbnail", methods=["POST"])
 def get_thumbnail_api():
     data = request.json
     url = data.get("url")
-    size = data.get("size", "maxres")
-
+    
     if not url:
         return jsonify({"error": "❌ Bạn chưa nhập link YouTube"}), 400
 
@@ -77,12 +67,26 @@ def get_thumbnail_api():
     if not video_id:
         return jsonify({"error": "❌ Link YouTube không hợp lệ"}), 400
 
-    thumb_url = get_thumbnail(video_id, size)
-    if not thumb_url:
-        return jsonify({"error": "⚠️ Không tìm thấy thumbnail"}), 404
+    try:
+        # Sử dụng pytube để lấy title (và kiểm tra xem video có tồn tại không)
+        yt = YouTube(url)
+        video_title = yt.title
+        
+        # Tạo danh sách TẤT CẢ các thumbnail URL
+        all_thumbnails = generate_all_thumbnails(video_id)
+        
+        # Trả về Tiêu đề và TẤT CẢ các URL
+        return jsonify({
+            "title": video_title,
+            "thumbnails": all_thumbnails
+        })
 
-    return jsonify({"thumbnail_url": thumb_url})
+    except Exception as e:
+        # Xử lý lỗi pytube (video không tồn tại, private, hoặc bị giới hạn)
+        return jsonify({
+            "error": f"❌ Lỗi: Video không hợp lệ (Private/Không tồn tại). Chi tiết: {str(e)}"
+        }), 400
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5000))  
     app.run(host="0.0.0.0", port=port)
