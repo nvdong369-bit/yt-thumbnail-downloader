@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Chỉ rõ vị trí Sơ đồ trang web của bạn
+Sitemap: https://yt-thumbnail-downloader-diqi.onrender.com/sitemap.xml
